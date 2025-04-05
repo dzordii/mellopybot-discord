@@ -29,11 +29,11 @@ async def setup(bot: commands.Bot):
     
     @bot.tree.command(name="ppt", description="Jogar Pedra, Papel e Tesoura")
     async def rock_paper_scissors(interaction: discord.Interaction, choice: str):
-        choices = ["Pedra", "Papel", "Tesoura"]
+        choices = ["Pedra", "Papel", "Tesoura"].lower()
         bot_choice = random.choice(choices)
         if choice == bot_choice:
             result = "Empate!"
-        elif (choice == "Pedra" and bot_choice == "Tesoura") or (choice == "Papel" and bot_choice == "Pedra") or (choice == "Tesoura" and bot_choice == "Papel"):
+        elif (choice == "pedra" and bot_choice == "tesoura") or (choice == "papel" and bot_choice == "pedra") or (choice == "tesoura" and bot_choice == "papel"):
             result = "Você venceu!"
         else:
             result = "Você perdeu!"
