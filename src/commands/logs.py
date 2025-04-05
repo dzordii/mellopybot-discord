@@ -1,15 +1,28 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import json
+import os
 
-log_channels = {}
+LOG_CHANNELS_FILE = "log_channels.json"
+
+if os.path.exists(LOG_CHANNELS_FILE):
+    with open(LOG_CHANNELS_FILE, "r") as file:
+        log_channels = json.load(file)
+else:
+    log_channels = {}
+
+def save_log_channels():
+    with open(LOG_CHANNELS_FILE, "w") as file:
+        json.dump(log_channels, file, indent=4)
 
 async def setup(bot: commands.Bot):
     @bot.tree.command(name="logs", description="Configura o canal de logs do servidor")
     @app_commands.describe(canal="Escolha o canal onde os logs serão enviados")
     @app_commands.checks.has_permissions(administrator=True)
     async def logs(interaction: discord.Interaction, canal: discord.TextChannel):
-        log_channels[interaction.guild.id] = canal.id
+        log_channels[str(interaction.guild.id)] = canal.id
+        save_log_channels() 
         embed = discord.Embed(
             title="Canal de Logs Configurado",
             description=f"Todos os logs serão enviados para {canal.mention}",
@@ -28,7 +41,7 @@ async def setup(bot: commands.Bot):
 
 def setup_events(bot: commands.Bot):
     async def send_log(guild_id, embed):
-        canal_id = log_channels.get(guild_id)
+        canal_id = log_channels.get(str(guild_id))
         if canal_id is None:
             return
         canal_log = bot.get_channel(canal_id)
@@ -100,17 +113,17 @@ def setup_events(bot: commands.Bot):
     async def on_guild_channel_create(channel: discord.abc.GuildChannel):
         embed = discord.Embed(
             title="📦 Canal Criado",
-            description=f"Canal {channel.mention} foi criado!",
+            description=f"Canal {channel.name} foi criado!",
+    
             color=discord.Color.green()
         )
         embed.set_footer(text=f"ID do canal: {channel.id}")
         await send_log(channel.guild.id, embed)
-
+    
     @bot.event
     async def on_guild_channel_delete(channel: discord.abc.GuildChannel):
         embed = discord.Embed(
             title="📦 Canal Deletado",
-            description=f"Canal {channel.name} foi deletado!",
             color=discord.Color.red()
         )
         embed.set_footer(text=f"ID do canal: {channel.id}")

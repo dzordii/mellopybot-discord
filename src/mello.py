@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-from commands import util, logs
+from commands import util, logs, funny
 
 
 
@@ -17,6 +17,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name="Mello - /mello"))
     await logs.setup(bot)
     await util.setup(bot) 
+    await funny.setup(bot)
     try:
         synced = await bot.tree.sync()
         print(f"Synced {len(synced)} comandos de barra!")
