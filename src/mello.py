@@ -29,8 +29,8 @@ async def reiniciarBot():
                 await bot.close()
             else:
                 print("Ops! O bot não foi reiniciado, tente novamente.")
-        except Exception as e:
-            print(f"Erro {e}")
+        except ValueError:
+            print(f"Erro")
             await bot.close()
         break
     
@@ -46,10 +46,13 @@ async def say(ctx:commands.Context, args):
     await ctx.send(args)
     
 @bot.command()
-async def some(ctx:commands.Context, num1:int, num2:int):
-    resultado = num1 + num2
-    await ctx.send(f"O resultado da soma é: {resultado}")
-    
+async def calcule(ctx: commands.Context, expression: str):
+    try:
+        # avalia a expressão matemática de forma segura
+        result = eval(expression, {"__builtins__": None}, {})
+        await ctx.send(f"O resultado da operação '{expression}' é: {result}")
+    except Exception as e:
+        await ctx.send(f"Ops! Não consegui calcular a expressão. Verifique se está correta. Erro: {e}")
     
     
 load_dotenv()
