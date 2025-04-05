@@ -27,6 +27,7 @@ async def some(ctx:commands.Context, num1:int, num2:int):
     resultado = num1 + num2
     await ctx.send(f"O resultado da soma é: {resultado}")
     
+    alteração qualquer
 
 
 load_dotenv()
